@@ -1,0 +1,12 @@
+StudentID	Special_Ed	ELL
+1		A
+2	Y	B
+3	Y	E
+8	4	D
+9	Z	E
+10		
+11	U	A
+12	K	O
+13	5	E
+14	A	
+15	Y	
