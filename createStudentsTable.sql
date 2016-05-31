@@ -10,6 +10,11 @@
 .mode column 
 .separator "\t"
 
+
+/*
+ * ===============================
+ * CREATE TABLES
+ */
 -- scores
 --CREATE TABLE IF NOT EXISTS scores (
 CREATE TABLE scores (
@@ -40,7 +45,8 @@ CREATE TABLE students (
 	ell TEXT,
 	score REAL);
 
-/* 
+/*
+ * =============================== 
  * BULK INSERT DATA
  */
 
@@ -53,19 +59,24 @@ CREATE TABLE students (
 DELETE FROM scores 
 WHERE studentID == 'StudentID';
 
+UPDATE scores SET subject = 'ELA' WHERE subject == 'ela';
+
 DELETE FROM demographics
 WHERE studentID == 'StudentID';
 
 DELETE FROM schools
 WHERE studentID == 'StudentID';
 
-/*SELECT * FROM scores;
+/*
+SELECT * FROM scores;
 
 SELECT * FROM demographics;
 
-SELECT * FROM schools;*/
+SELECT * FROM schools;
+*/
 
-/*
+/* 
+ * ===============================
  * CREATE QUERY FOR LOADING DATA 
  * TO students TABLE
  *
@@ -104,34 +115,94 @@ INSERT INTO students
 		ON dem.studentID = t.studentID
 		WHERE t.studentID IS NULL;
 
+
 SELECT * 
 	FROM students;
 
-
-SELECT * 
-	FROM students
-	ORDER BY studentID ASC;
-
-SELECT school, COUNT(studentID) 
-	FROM students
-	WHERE score < 65.0
-	GROUP BY school;
-
-SELECT school, COUNT(studentID) 
-	FROM students
-	WHERE score >= 65.0
-	GROUP BY school;
-
-SELECT school, COUNT(studentID) 
-	FROM students
-	GROUP BY school;
-
 /*
-SELECT s1.school, COUNT(s1.studentID), COUNT(s1.studentID) / s2.totalCnt AS passRate 
-	FROM students AS s1
-	LEFT OUTER JOIN (SELECT school, COUNT(studentID) AS totalCnt FROM students GROUP BY school) s2 ON s1.school = s2.school 
-	WHERE s1.score >= 65.0
-	GROUP BY s1.school;
-*/
+ * ===============================
+ * PASS RATE QUERIES
+ */
+
+-- A1) pass rate by school
+SELECT s1.school, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateBySchool
+	FROM (SELECT school, COUNT(studentID) cnt
+			FROM students
+			WHERE score >= 65.0
+			GROUP BY school) s1
+	CROSS JOIN (SELECT school, COUNT(studentID) cnt
+					FROM students
+					GROUP BY school) s2
+	ON s1.school == s2.school;
+
+-- A2) pass rate by subject
+SELECT s1.subject, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateBySubject
+	FROM (SELECT subject, COUNT(studentID) cnt
+			FROM students
+			WHERE score >= 65.0
+				AND subject != 'SOC'
+			GROUP BY subject) s1
+	CROSS JOIN (SELECT subject, COUNT(studentID) cnt
+					FROM students
+					GROUP BY subject) s2
+	ON s1.subject == s2.subject;
+
+-- A3i) pass rate by all students
+SELECT s1.studentID, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateByAllStudents
+	FROM (SELECT studentID, COUNT(studentID) cnt
+			FROM students
+			WHERE score >= 65.0
+				AND subject != 'SOC'
+			GROUP BY studentID) s1
+	CROSS JOIN (SELECT studentID, COUNT(studentID) cnt
+					FROM students
+					GROUP BY studentID) s2
+	ON s1.studentID == s2.studentID;
+
+-- A3ii) pass rate by ell students
+---- TODO: Sum all!!!! Use "UNION ALL"
+SELECT s1.ell, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateByEllStudents
+	FROM (SELECT ell, COUNT(studentID) cnt
+			FROM students
+			WHERE score >= 65.0
+				AND ell IN ('A', 'E', 'I', 'O', 'U')
+--			) s1
+			GROUP BY ell) s1
+	CROSS JOIN (SELECT ell, COUNT(studentID) cnt
+					FROM students
+--					) s2
+					GROUP BY ell) s2
+	ON s1.ell == s2.ell;
+
+-- A3iii) pass rate by special ed students
+SELECT s1.specialEd, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateBySpecialEdStudents
+	FROM (SELECT specialEd, COUNT(studentID) cnt
+			FROM students
+			WHERE score >= 65.0
+				AND specialEd == 'Y'
+--			) s1
+			GROUP BY specialEd) s1
+	CROSS JOIN (SELECT specialEd, COUNT(studentID) cnt
+					FROM students
+--					) s2
+					GROUP BY specialEd) s2
+	ON s1.specialEd == s2.specialEd;
+
+-- A3iv) pass rate by both ell and special ed students
+SELECT s1.specialEd, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateByEllAndSpecialEdStudents
+	FROM (SELECT specialEd, COUNT(studentID) cnt
+			FROM students
+			WHERE score >= 65.0
+				AND ell IN ('A', 'E', 'I', 'O', 'U')
+				AND specialEd == 'Y'
+			GROUP BY specialEd) s1
+	CROSS JOIN (SELECT specialEd, COUNT(studentID) cnt
+					FROM students
+					GROUP BY specialEd) s2
+	ON s1.specialEd == s2.specialEd;
+
+-- TODO: group by all of the above
+
+
 .quit
 .exit
