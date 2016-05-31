@@ -169,89 +169,6 @@ INSERT INTO temp_students
 
 /*
  * ===============================
- * PASS RATE QUERIES
- */
-
--- A1) pass rate by school
-SELECT s1.school, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateBySchool
-	FROM (SELECT school, COUNT(studentID) cnt
-			FROM students
-			WHERE score >= 65.0
-			GROUP BY school) s1
-	CROSS JOIN (SELECT school, COUNT(studentID) cnt
-					FROM students
-					GROUP BY school) s2
-	ON s1.school == s2.school;
-
--- A2) pass rate by subject
-SELECT s1.subject, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateBySubject
-	FROM (SELECT subject, COUNT(studentID) cnt
-			FROM students
-			WHERE score >= 65.0
-				AND subject != 'SOC'
-			GROUP BY subject) s1
-	CROSS JOIN (SELECT subject, COUNT(studentID) cnt
-					FROM students
-					GROUP BY subject) s2
-	ON s1.subject == s2.subject;
-
--- A3i) pass rate by all students
-SELECT s1.studentID, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateByAllStudents
-	FROM (SELECT studentID, COUNT(studentID) cnt
-			FROM students
-			WHERE score >= 65.0
-				AND subject != 'SOC'
-			GROUP BY studentID) s1
-	CROSS JOIN (SELECT studentID, COUNT(studentID) cnt
-					FROM students
-					GROUP BY studentID) s2
-	ON s1.studentID == s2.studentID;
-
--- A3ii) pass rate by ell students
----- TODO: Sum all!!!! Use "UNION ALL"
-SELECT s1.ell, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateByEllStudents
-	FROM (SELECT ell, COUNT(studentID) cnt
-			FROM students
-			WHERE score >= 65.0
-				AND ell IN ('A', 'E', 'I', 'O', 'U')
---			) s1
-			GROUP BY ell) s1
-	CROSS JOIN (SELECT ell, COUNT(studentID) cnt
-					FROM students
---					) s2
-					GROUP BY ell) s2
-	ON s1.ell == s2.ell;
-
--- A3iii) pass rate by special ed students
-SELECT s1.specialEd, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateBySpecialEdStudents
-	FROM (SELECT specialEd, COUNT(studentID) cnt
-			FROM students
-			WHERE score >= 65.0
-				AND specialEd == 'Y'
---			) s1
-			GROUP BY specialEd) s1
-	CROSS JOIN (SELECT specialEd, COUNT(studentID) cnt
-					FROM students
---					) s2
-					GROUP BY specialEd) s2
-	ON s1.specialEd == s2.specialEd;
-
--- A3iv) pass rate by both ell and special ed students
-SELECT s1.specialEd, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateByEllAndSpecialEdStudents
-	FROM (SELECT specialEd, COUNT(studentID) cnt
-			FROM students
-			WHERE score >= 65.0
-				AND ell IN ('A', 'E', 'I', 'O', 'U')
-				AND specialEd == 'Y'
-			GROUP BY specialEd) s1
-	CROSS JOIN (SELECT specialEd, COUNT(studentID) cnt
-					FROM students
-					GROUP BY specialEd) s2
-	ON s1.specialEd == s2.specialEd;
-
-
-/*
- * ===============================
  * PASS RATE QUERIES on TEMP TABLE temp_students
  */
 
@@ -264,10 +181,31 @@ SELECT s1.school, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS
 	CROSS JOIN (SELECT school, COUNT(studentID) cnt
 					FROM temp_students
 					GROUP BY school) s2
+	ON s1.school == s2.school
+UNION ALL
+SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySchool
+	FROM (SELECT school, COUNT(studentID) cnt
+			FROM temp_students
+			WHERE score >= 65.0
+			GROUP BY school) s1
+	CROSS JOIN (SELECT school, COUNT(studentID) cnt
+					FROM temp_students
+					GROUP BY school) s2
 	ON s1.school == s2.school;
 
 -- A2) pass rate by subject
 SELECT s1.subject, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateBySubject
+	FROM (SELECT subject, COUNT(studentID) cnt
+			FROM temp_students
+			WHERE score >= 65.0
+				AND subject != 'SOC'
+			GROUP BY subject) s1
+	CROSS JOIN (SELECT subject, COUNT(studentID) cnt
+					FROM temp_students
+					GROUP BY subject) s2
+	ON s1.subject == s2.subject
+UNION ALL
+SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySubject
 	FROM (SELECT subject, COUNT(studentID) cnt
 			FROM temp_students
 			WHERE score >= 65.0
@@ -288,11 +226,35 @@ SELECT s1.studentID, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL)
 	CROSS JOIN (SELECT studentID, COUNT(studentID) cnt
 					FROM temp_students
 					GROUP BY studentID) s2
+	ON s1.studentID == s2.studentID
+UNION ALL
+SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByAllStudents
+	FROM (SELECT studentID, COUNT(studentID) cnt
+			FROM temp_students
+			WHERE score >= 65.0
+				AND subject != 'SOC'
+			GROUP BY studentID) s1
+	CROSS JOIN (SELECT studentID, COUNT(studentID) cnt
+					FROM temp_students
+					GROUP BY studentID) s2
 	ON s1.studentID == s2.studentID;
 
 -- A3ii) pass rate by ell students
 ---- TODO: Sum all!!!! Use "UNION ALL"
 SELECT s1.ell, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS passRateByEllStudents
+	FROM (SELECT ell, COUNT(studentID) cnt
+			FROM temp_students
+			WHERE score >= 65.0
+				AND ell IN ('A', 'E', 'I', 'O', 'U')
+--			) s1
+			GROUP BY ell) s1
+	CROSS JOIN (SELECT ell, COUNT(studentID) cnt
+					FROM temp_students
+--					) s2
+					GROUP BY ell) s2
+	ON s1.ell == s2.ell
+UNION ALL
+SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByEllStudents
 	FROM (SELECT ell, COUNT(studentID) cnt
 			FROM temp_students
 			WHERE score >= 65.0
@@ -317,6 +279,19 @@ SELECT s1.specialEd, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL)
 					FROM temp_students
 --					) s2
 					GROUP BY specialEd) s2
+	ON s1.specialEd == s2.specialEd
+UNION ALL
+SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySpecialEdStudents
+	FROM (SELECT specialEd, COUNT(studentID) cnt
+			FROM temp_students
+			WHERE score >= 65.0
+				AND specialEd == 'Y'
+--			) s1
+			GROUP BY specialEd) s1
+	CROSS JOIN (SELECT specialEd, COUNT(studentID) cnt
+					FROM temp_students
+--					) s2
+					GROUP BY specialEd) s2
 	ON s1.specialEd == s2.specialEd;
 
 -- A3iv) pass rate by both ell and special ed students
@@ -330,12 +305,52 @@ SELECT s1.specialEd, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL)
 	CROSS JOIN (SELECT specialEd, COUNT(studentID) cnt
 					FROM temp_students
 					GROUP BY specialEd) s2
+	ON s1.specialEd == s2.specialEd
+UNION ALL
+SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByEllAndSpecialEdStudents
+	FROM (SELECT specialEd, COUNT(studentID) cnt
+			FROM temp_students
+			WHERE score >= 65.0
+				AND ell IN ('A', 'E', 'I', 'O', 'U')
+				AND specialEd == 'Y'
+			GROUP BY specialEd) s1
+	CROSS JOIN (SELECT specialEd, COUNT(studentID) cnt
+					FROM temp_students
+					GROUP BY specialEd) s2
 	ON s1.specialEd == s2.specialEd;
 
 
 /*
- * 
+ * B)student level dataset -> studentLevel.txt
+ * 		B1) ell = 1, otherwise ell = 0
+ * 		B2) speacialEd = 1, otherwise = specialEd = 0
+ * 		B3) leave value empty for not taking an exam i.e. NULL 
  */
+CREATE TEMP TABLE temp_studentsLevel (
+	studentID TEXT,  
+	school TEXT, 
+	scoreMath REAL,
+	scoreELA REAL,
+	passMath INTEGER,
+	passELA INTEGER, 
+	inEll INTEGER,
+	inSpecialEd INTEGER);
+
+INSERT INTO temp_studentsLevel 
+	SELECT studentID, 
+		   school, 
+		   CASE WHEN subject = 'Math' AND score >= 65.0 THEN score ELSE 0.0 END scoreMath,
+		   CASE WHEN subject = 'ELA' AND score >= 65.0 THEN score ELSE 0.0 END scoreELA,
+		   CASE WHEN subject = 'Math' AND score >= 65.0 THEN 1 ELSE 0 END passedMath,
+		   CASE WHEN subject = 'ELA' AND score >= 65.0 THEN 1 ELSE 0 END passedELA,
+		   CASE WHEN ell IN ('A', 'E', 'I', 'O', 'U') THEN 1 ELSE 0 END inEll,
+		   CASE WHEN specialEd = 'Y' THEN 1 ELSE 0 END inSpecialEd   
+		FROM temp_students;
+
+SELECT * 
+	FROM temp_studentsLevel;
+
+
 
 .quit
 .exit
