@@ -13,7 +13,7 @@ $ vagrant up
 
 $ vagrant ssh
 
-vagrant@127.0.0.1's password: **vagrant**
+vagrant@127.0.0.1's password: vagrant
 
 vagrant@vagrant-ubuntu-trusty-64:~$ ./setup_students
 
