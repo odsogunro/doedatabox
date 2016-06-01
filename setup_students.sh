@@ -14,3 +14,6 @@ column -n -t -s"  " data/Demographics.txt > data/demographicsClean.txt
 
 # run program
 sqlite3 students.db -init createStudentsTable.sql 
+
+# delete database: system cleanup
+rm students.db

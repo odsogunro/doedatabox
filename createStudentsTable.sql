@@ -365,7 +365,10 @@ SELECT *
 /*
  * DROP TABLES: system cleanup
  * 
- */
+ * see setup_students.sh using 
+ * database deletion for cleanup  
+ * $ rm students.db 
+
 DROP TABLE scores;
 DROP TABLE demographics;
 DROP TABLE schools;
@@ -373,5 +376,5 @@ DROP TABLE students;
 DROP TABLE temp.temp_students;
 DROP TABLE temp.temp_scores_schools;
 DROP TABLE temp.temp_studentsLevel;
-
+ */
 --.exit
