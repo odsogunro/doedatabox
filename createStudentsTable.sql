@@ -356,7 +356,11 @@ INSERT INTO temp_studentsLevel
 SELECT * 
 	FROM temp_studentsLevel;
 
+.mode column
+.separator "\t"
 .output stdout
---TODO: dump to tab delimited file
---.output
+
+SELECT * 
+	FROM temp_studentsLevel;
+
 --.exit
