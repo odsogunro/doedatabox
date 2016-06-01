@@ -27,7 +27,9 @@ $ vagrant destroy
 ```
 
 *results: part A*
+```
 ![part A](/images/partA.png)
+```
 
 *results: part B*
 ![part B](/images/partB.png)
