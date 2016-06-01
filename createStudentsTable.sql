@@ -339,10 +339,12 @@ CREATE TEMP TABLE temp_studentsLevel (
 INSERT INTO temp_studentsLevel 
 	SELECT studentID, 
 		   school, 
-		   CASE WHEN subject = 'Math' AND score >= 65.0 THEN score ELSE 0.0 END scoreMath,
-		   CASE WHEN subject = 'ELA' AND score >= 65.0 THEN score ELSE 0.0 END scoreELA,
-		   CASE WHEN subject = 'Math' AND score >= 65.0 THEN 1 ELSE 0 END passedMath,
-		   CASE WHEN subject = 'ELA' AND score >= 65.0 THEN 1 ELSE 0 END passedELA,
+		   CASE WHEN subject = 'Math' THEN score END scoreMath,
+		   CASE WHEN subject = 'ELA' THEN score END scoreELA,
+		   CASE WHEN subject = 'Math' AND score IS NULL THEN NULL 
+		   		WHEN subject = 'Math' AND score >= 65.0 THEN 1 ELSE 0 END passedMath,
+		   CASE WHEN subject = 'ELA' AND score IS NULL THEN NULL 
+		   		WHEN subject = 'ELA' AND score >= 65.0 THEN 1 ELSE 0 END passedELA,
 		   CASE WHEN ell IN ('A', 'E', 'I', 'O', 'U') THEN 1 ELSE NULL END inEll,
 		   CASE WHEN specialEd = 'Y' THEN 1 ELSE NULL END inSpecialEd   
 		FROM temp_students;
