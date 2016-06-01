@@ -183,7 +183,7 @@ SELECT s1.school, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS
 					GROUP BY school) s2
 	ON s1.school == s2.school
 UNION ALL
-SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySchool
+SELECT 'TOTAL', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySchool
 	FROM (SELECT school, COUNT(studentID) cnt
 			FROM temp_students
 			WHERE score >= 65.0
@@ -205,7 +205,7 @@ SELECT s1.subject, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) A
 					GROUP BY subject) s2
 	ON s1.subject == s2.subject
 UNION ALL
-SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySubject
+SELECT 'TOTAL', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySubject
 	FROM (SELECT subject, COUNT(studentID) cnt
 			FROM temp_students
 			WHERE score >= 65.0
@@ -228,7 +228,7 @@ SELECT s1.studentID, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL)
 					GROUP BY studentID) s2
 	ON s1.studentID == s2.studentID
 UNION ALL
-SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByAllStudents
+SELECT 'TOTAL', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByAllStudents
 	FROM (SELECT studentID, COUNT(studentID) cnt
 			FROM temp_students
 			WHERE score >= 65.0
@@ -254,7 +254,7 @@ SELECT s1.ell, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL) AS pa
 					GROUP BY ell) s2
 	ON s1.ell == s2.ell
 UNION ALL
-SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByEllStudents
+SELECT 'TOTAL', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByEllStudents
 	FROM (SELECT ell, COUNT(studentID) cnt
 			FROM temp_students
 			WHERE score >= 65.0
@@ -281,7 +281,7 @@ SELECT s1.specialEd, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL)
 					GROUP BY specialEd) s2
 	ON s1.specialEd == s2.specialEd
 UNION ALL
-SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySpecialEdStudents
+SELECT 'TOTAL', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateBySpecialEdStudents
 	FROM (SELECT specialEd, COUNT(studentID) cnt
 			FROM temp_students
 			WHERE score >= 65.0
@@ -307,7 +307,7 @@ SELECT s1.specialEd, s1.cnt, s2.cnt, CAST(s1.cnt AS REAL) / CAST(s2.cnt AS REAL)
 					GROUP BY specialEd) s2
 	ON s1.specialEd == s2.specialEd
 UNION ALL
-SELECT 'TOTAL: ', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByEllAndSpecialEdStudents
+SELECT 'TOTAL', SUM(s1.cnt), SUM(s2.cnt), CAST(SUM(s1.cnt) AS REAL) / CAST(SUM(s2.cnt) AS REAL) AS passRateByEllAndSpecialEdStudents
 	FROM (SELECT specialEd, COUNT(studentID) cnt
 			FROM temp_students
 			WHERE score >= 65.0
@@ -347,10 +347,16 @@ INSERT INTO temp_studentsLevel
 		   CASE WHEN specialEd = 'Y' THEN 1 ELSE 0 END inSpecialEd   
 		FROM temp_students;
 
+-- db settings
+.mode tabs
+.separator "\t"
+
+.output "data/studentsLevel.txt"
+
 SELECT * 
 	FROM temp_studentsLevel;
 
-
-
-.quit
-.exit
+.output stdout
+--TODO: dump to tab delimited file
+--.output
+--.exit
