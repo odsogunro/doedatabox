@@ -343,8 +343,8 @@ INSERT INTO temp_studentsLevel
 		   CASE WHEN subject = 'ELA' AND score >= 65.0 THEN score ELSE 0.0 END scoreELA,
 		   CASE WHEN subject = 'Math' AND score >= 65.0 THEN 1 ELSE 0 END passedMath,
 		   CASE WHEN subject = 'ELA' AND score >= 65.0 THEN 1 ELSE 0 END passedELA,
-		   CASE WHEN ell IN ('A', 'E', 'I', 'O', 'U') THEN 1 ELSE 0 END inEll,
-		   CASE WHEN specialEd = 'Y' THEN 1 ELSE 0 END inSpecialEd   
+		   CASE WHEN ell IN ('A', 'E', 'I', 'O', 'U') THEN 1 ELSE NULL END inEll,
+		   CASE WHEN specialEd = 'Y' THEN 1 ELSE NULL END inSpecialEd   
 		FROM temp_students;
 
 -- db settings
