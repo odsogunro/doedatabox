@@ -339,15 +339,18 @@ CREATE TEMP TABLE temp_studentsLevel (
 INSERT INTO temp_studentsLevel 
 	SELECT studentID, 
 		   school, 
-		   CASE WHEN subject = 'Math' THEN score END scoreMath,
-		   CASE WHEN subject = 'ELA' THEN score END scoreELA,
-		   CASE WHEN subject = 'Math' AND score IS NULL THEN NULL 
-		   		WHEN subject = 'Math' AND score >= 65.0 THEN 1 ELSE 0 END passedMath,
-		   CASE WHEN subject = 'ELA' AND score IS NULL THEN NULL 
-		   		WHEN subject = 'ELA' AND score >= 65.0 THEN 1 ELSE 0 END passedELA,
+		   SUM(CASE WHEN subject = 'Math' THEN score END) scoreMath,
+		   SUM(CASE WHEN subject = 'ELA' THEN score END) scoreELA,
+		   SUM(CASE WHEN subject = 'Math' AND score >= 65.0 THEN 1
+		   			WHEN subject = 'Math' AND score < 65.0 THEN 0
+		   			ELSE NULL END) passedMath,
+		   SUM(CASE WHEN subject = 'ELA' AND score >= 65.0 THEN 1
+		   			WHEN subject = 'ELA' AND score < 65.0 THEN 0
+		   			ELSE NULL END) passedELA,
 		   CASE WHEN ell IN ('A', 'E', 'I', 'O', 'U') THEN 1 ELSE NULL END inEll,
 		   CASE WHEN specialEd = 'Y' THEN 1 ELSE NULL END inSpecialEd   
 		FROM temp_students
+		GROUP BY studentID
 		ORDER BY studentID;
 
 
@@ -368,21 +371,7 @@ SELECT *
 	FROM temp_studentsLevel;
 
 
-SELECT studentID, 
-		   school, 
-		   SUM(CASE WHEN subject = 'Math' THEN score END) scoreMath,
-		   SUM(CASE WHEN subject = 'ELA' THEN score END) scoreELA,
-		   SUM(CASE WHEN subject = 'Math' AND score >= 65.0 THEN 1
-		   			WHEN subject = 'Math' AND score < 65.0 THEN 0
-		   			ELSE NULL END) passedMath,
-		   SUM(CASE WHEN subject = 'ELA' AND score >= 65.0 THEN 1
-		   			WHEN subject = 'ELA' AND score < 65.0 THEN 0
-		   			ELSE NULL END) passedELA,
-		   CASE WHEN ell IN ('A', 'E', 'I', 'O', 'U') THEN 1 ELSE NULL END inEll,
-		   CASE WHEN specialEd = 'Y' THEN 1 ELSE NULL END inSpecialEd   
-		FROM temp_students
-		GROUP BY studentID
-		ORDER BY studentID;
+
 /*
  * DROP TABLES: system cleanup
  * 
