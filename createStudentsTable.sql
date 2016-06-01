@@ -362,5 +362,16 @@ SELECT *
 
 SELECT * 
 	FROM temp_studentsLevel;
+/*
+ * DROP TABLES: system cleanup
+ * 
+ */
+DROP TABLE scores;
+DROP TABLE demographics;
+DROP TABLE schools;
+DROP TABLE students;
+DROP TABLE temp.temp_students;
+DROP TABLE temp.temp_scores_schools;
+DROP TABLE temp.temp_studentsLevel;
 
 --.exit
