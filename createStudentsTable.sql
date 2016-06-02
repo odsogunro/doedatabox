@@ -347,11 +347,15 @@ INSERT INTO temp_studentsLevel
 		   SUM(CASE WHEN subject = 'ELA' AND score >= 65.0 THEN 1
 		   			WHEN subject = 'ELA' AND score < 65.0 THEN 0
 		   			ELSE NULL END) passedELA,
-		   CASE WHEN ell IN ('A', 'E', 'I', 'O', 'U') THEN 1 ELSE NULL END inEll,
-		   CASE WHEN specialEd = 'Y' THEN 1 ELSE NULL END inSpecialEd   
+		   (CASE WHEN ell IN ('A', 'E', 'I', 'O', 'U') THEN 1 
+		   		 WHEN ell NOT IN ('A', 'E', 'I', 'O', 'U') AND NOT NULL THEN 0 
+		   		 ELSE NULL END) inEll,
+		   CASE WHEN specialEd = 'Y' THEN 1
+		   		WHEN specialEd != 'Y' AND NOT NULL THEN 0 
+		   		ELSE NULL END inSpecialEd   
 		FROM temp_students
 		GROUP BY studentID
-		ORDER BY studentID;
+		ORDER BY school, studentID;
 
 
 -- db settings
