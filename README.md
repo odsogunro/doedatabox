@@ -1,5 +1,5 @@
 # doedatabox
-department of education data task 2016
+doe data task 2016
 
 *installation*
 ```
